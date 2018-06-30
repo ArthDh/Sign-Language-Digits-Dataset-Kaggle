@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 
 # TODO:
-# Pass dataset through mask
-# find convex hull
+# Pass dataset through mask - completed
+# find convex hull - completed
 # Add background variation
 
 
