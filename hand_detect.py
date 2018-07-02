@@ -21,27 +21,62 @@ class ImageGen:
         self.n_imgs = n_imgs
         self.countoured_images = []
 
-    def draw_countours():
+    def draw_contours(self):
         for img in self.foreground_imgs:
-            contoured_image = img.copy()
+            ogi_img = cv2.imread(img)
+
+            rows, cols, channels = ogi_img.shape
+            print(rows, cols, channels)
+            # Copies of original image
+            contoured_image = ogi_img.copy()
+            copy_image = ogi_img.copy()
+
             # Convert image to YCrCb
-            imageYCrCb = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
+            imageYCrCb = cv2.cvtColor(copy_image, cv2.COLOR_BGR2YCR_CB)
             # Find region with skin tone in YCrCb image
-            skinRegion = cv2.inRange(imageYCrCb, min_YCrCb, max_YCrCb)
+            skinRegion = cv2.inRange(imageYCrCb, self.min_YCrCb, self.max_YCrCb)
             # Do contour detection on skin region
-            img, contours, _ = cv2.findContours(skinRegion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            # Draw the contour on the source image
-            for i, c in enumerate(contours):
-                area = cv2.contourArea(c)
-                if area > 1000:
-                    cv2.drawContours(contoured_image, contours, i, (0, 0, 0))
+            masked_img, contours, _ = cv2.findContours(skinRegion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            self.countoured_images.append(contoured_image)
+            # Image no background
+            img_no_bg = cv2.bitwise_and(ogi_img, ogi_img, mask=masked_img)
 
-    def mask_background():
+            # Background image
+            bg_img = cv2.imread(self.background_imgs[0])
+            bg_img = bg_img[0:rows, 0:cols]
 
-    def add_background():
+            bg_mask = cv2.bitwise_not(masked_img)
+
+            bg_img = cv2.bitwise_and(bg_img, bg_img, mask=bg_mask)
+
+            temp = img_no_bg + bg_img
+
+            # Display image with no bg
+            cv2.imshow('Countoured: ', temp)
+            # Check for user input to close program
+            keyPressed = cv2.waitKey(1)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+    def mask_background(self):
         pass
 
-    def generate_images():
+    def add_background(self):
         pass
+
+    def generate_images(self):
+        pass
+
+
+if __name__ == '__main__':
+
+    hand_images = []
+    background_imgs = []
+
+    h1_path = "/Users/arth/Desktop/ML/projects/Sign Language/Dataset/test/0/IMG_4069.JPG"
+    b1_path = "/Users/arth/Desktop/backgroud_ds/banded_0008.JPG"
+    hand_images.append(h1_path)
+    background_imgs.append(b1_path)
+
+    imgen = ImageGen(hand_images, background_imgs, 1)
+    imgen.draw_contours()
