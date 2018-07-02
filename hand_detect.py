@@ -2,37 +2,46 @@ import numpy as np
 import cv2
 
 # TODO:
-# Pass dataset through mask - completed
-# find convex hull - completed
+# Pass dataset through mask
+# find convex hull
 # Add background variation
 
 
-# Constants for finding range of skin color in YCrCb
-min_YCrCb = np.array([0, 133, 77], np.uint8)
-max_YCrCb = np.array([255, 173, 127], np.uint8)
+class ImageGen:
 
+    # Constants for finding range of skin color in YCrCb
+    min_YCrCb = np.array([0, 133, 77], np.uint8)
+    max_YCrCb = np.array([255, 173, 127], np.uint8)
+    foreground_imgs = []
+    background_imgs = []
 
-frame = cv2.imread('')
-temp = frame.copy()
-# Convert image to YCrCb
-imageYCrCb = cv2.cvtColor(frame, cv2.COLOR_BGR2YCR_CB)
+    def __init__(self, foreground_imgs, background_imgs, n_imgs):
+        self.foreground_imgs = foreground_imgs
+        self.background_imgs = background_imgs
+        self.n_imgs = n_imgs
+        self.countoured_images = []
 
-# Find region with skin tone in YCrCb image
-skinRegion = cv2.inRange(imageYCrCb, min_YCrCb, max_YCrCb)
+    def draw_countours():
+        for img in self.foreground_imgs:
+            contoured_image = img.copy()
+            # Convert image to YCrCb
+            imageYCrCb = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
+            # Find region with skin tone in YCrCb image
+            skinRegion = cv2.inRange(imageYCrCb, min_YCrCb, max_YCrCb)
+            # Do contour detection on skin region
+            img, contours, _ = cv2.findContours(skinRegion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            # Draw the contour on the source image
+            for i, c in enumerate(contours):
+                area = cv2.contourArea(c)
+                if area > 1000:
+                    cv2.drawContours(contoured_image, contours, i, (0, 0, 0))
 
-# Do contour detection on skin region
-image, contours, _ = cv2.findContours(skinRegion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            self.countoured_images.append(contoured_image)
 
-# Draw the contour on the source image
-for i, c in enumerate(contours):
-    area = cv2.contourArea(c)
-    if area > 1000:
-        cv2.drawContours(temp, contours, i, (0, 0, 0))
+    def mask_background():
 
-# Display the source image
-cv2.imshow('test', temp)
+    def add_background():
+        pass
 
-# Check for user input to close program
-keyPressed = cv2.waitKey(1)  # wait 1 milisecond in each iteration of while loop
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    def generate_images():
+        pass
