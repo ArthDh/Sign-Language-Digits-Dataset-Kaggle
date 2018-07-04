@@ -11,7 +11,7 @@ Image size: 100x100
 Color space: RGB
 
 # TODO:
-* [] Improve dataset by adding background variation
+* [x] Improve dataset by adding background variation
 * [] Upload model to webpage(tensorflow.js)
 * [] Map outputs to visual feedback
 
