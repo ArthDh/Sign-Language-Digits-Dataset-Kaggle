@@ -16,13 +16,13 @@ class ImageGen:
     max_YCrCb = np.array([255, 173, 127], np.uint8)
     foreground_imgs = []
     background_imgs = []
-    final_ds_path = "/Users/arth/Desktop/test_ds"
 
-    def __init__(self, foreground_imgs, background_imgs, n_imgs):
+    def __init__(self, foreground_imgs, background_imgs, n_imgs, path):
         self.foreground_imgs = foreground_imgs  # Pass handsign(i)
         self.background_imgs = background_imgs  # Pass dtd
         self.n_imgs = n_imgs  # Number of images to generate
         self.countoured_images = []  # Storing generated images
+        self.path = path
 
     def get_random_sign(self):
         index = np.random.randint(len(self.foreground_imgs) - 1)
@@ -32,9 +32,12 @@ class ImageGen:
         index = np.random.randint(len(self.background_imgs) - 1)
         return self.background_imgs[index]
 
+    def set_path(path):
+        self.path = path
+
     def get_images(self):
-        if not os.path.exists(self.final_ds_path):
-            os.mkdir(self.final_ds_path)
+        if not os.path.exists(self.path):
+            os.mkdir(self.path)
 
         for i in range(self.n_imgs):
 
@@ -65,28 +68,10 @@ class ImageGen:
 
             bg_img = cv2.bitwise_and(bg_img, bg_img, mask=bg_mask)
 
-            temp = img_no_bg + bg_img
+            rows_bg, cols_bg, _ = bg_img.shape
 
-            cv2.imwrite("{}/{}.jpg".format(self.final_ds_path, i), temp)
-
-
-if __name__ == '__main__':
-
-    hand_images = []
-    background_imgs = []
-
-    h1_path = "/Users/arth/Desktop/ML/projects/Sign Language/Dataset/test/1/"
-    b1_path = "/Users/arth/Desktop/backgroud_ds/"
-
-    for imgs in os.listdir(h1_path):
-        if not imgs.startswith('.'):
-            path = os.path.join(h1_path, imgs)
-            hand_images.append(path)
-
-    for imgs in os.listdir(b1_path):
-        if not imgs.startswith('.'):
-            path = os.path.join(b1_path, imgs)
-            background_imgs.append(path)
-
-    imgen = ImageGen(hand_images, background_imgs, 10)
-    imgen.get_images()
+            if(rows == rows_bg and cols == cols_bg):
+                temp = img_no_bg + bg_img
+                cv2.imwrite("{}/{}.jpg".format(self.path, i), temp)
+            else:
+                print("Shape error?")
